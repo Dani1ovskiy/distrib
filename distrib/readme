@@ -1,0 +1,5 @@
+adduser pgadmin
+adduser postgres
+adduser app
+chown -R pgadmin:pgadmin /root/del/bot/ctitip_pgadmin/pgadmin
+chown -R postgres:postgres /root/del/bot/ctitp_db/pgdata

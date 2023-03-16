@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  letsencrypt:
+    image: certbot/certbot:latest #имя контейнейра. тэг latest может быть заменён на любой другой, уже скачанный контейнер
+    command: sh -c "certbot certonly --webroot -w /tmp/acme_challenge -d bot.ctitp.ru --text --agree-tos --email admin@ctitp.ru --rsa-key-size 4096 --verbose --keep-until-expiring --preferred-challenges=http" #команда, выполняемая внутри контейнера после старта. в качестве параметров передаются тип авторизации домена (webroot), временная директория для токена проверки (/tmp/acme_challenge), домен и т.д.
+    entrypoint: ""
+    volumes:
+      - ./data/letsencrypt:/etc/letsencrypt #хранилище для сертификатов
+      - /tmp/acme_challenge:/tmp/acme_challenge #временная директория для токена проверки хоста certbot'ом
+    environment:
+      - TERM=xterm
+

@@ -1,0 +1,116 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: ctitp_db_cntnr
+    image: postgres
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=50"
+    environment:
+      POSTGRES_DB: "ctitpbot"
+      POSTGRES_USER: "ctitpbotusr"
+      POSTGRES_PASSWORD: "cti312874bxcmsr"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      TZ: "Europe/Moscow"
+      PGTZ: "Europe/Moscow"
+    volumes:
+      - ./ctitp_db/initdb:/docker-entrypoint-initdb.d
+      - ./ctitp_db/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5895:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ctitpbotusr -d ctitpbot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - postgres
+      
+  robot:
+    container_name: ctitp_robot_cntnr
+    build:
+      context: ./ctitp_robot
+      dockerfile: ./robot_dockerfile
+    image: robot:1
+    environment:
+      - TZ=Europe/Moscow
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - postgres
+      
+  chatbot:
+    container_name: ctitp_chatbot_cntnr
+    build:
+      context: ./ctitp_chatbot
+      dockerfile: ./dockerfile
+    image: chatbot:1
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - ./ctitp_chatbot/data:/usr/src/app/dockerdata
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - postgres
+      
+#  pgadmin:
+#    container_name: ctitp_pgadmin_cntnr
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: "ctitpbotusr@ctitp.com"
+#      PGADMIN_DEFAULT_PASSWORD: "cti312874bxcmsr724bsc"
+#      PGADMIN_CONFIG_SERVER_MODE: "False"
+#    volumes:
+#      - ./ctitip_pgadmin/pgadmin:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#    restart: unless-stopped
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 1G
+#    networks:
+#      - postgres
+
+#  postgres_exporter:
+#    container_name: ctitp_exporter_cntnr
+#    image: prometheuscommunity/postgres-exporter:v0.10.0
+#    environment:
+#      DATA_SOURCE_URI: "postgres:5432/ctitpbot?sslmode=disable"
+#      DATA_SOURCE_USER: "ctitpbotusr"
+#      DATA_SOURCE_PASS: "cti312874bxcmsr"
+#      PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/queries.yaml"
+#    volumes:
+#      - ./ctitp_exporter/queries.yaml:/etc/postgres_exporter/queries.yaml:ro
+#    ports:
+#      - "9187:9187"
+#    restart: unless-stopped
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.2'
+#          memory: 500M
+#    networks:
+#      - postgres
+
+networks:
+  postgres:
+    driver: bridge
