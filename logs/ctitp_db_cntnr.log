@@ -1,0 +1,9 @@
+{"log":"\n","stream":"stdout","time":"2023-03-23T11:11:54.180071752Z"}
+{"log":"PostgreSQL Database directory appears to contain a database; Skipping initialization\n","stream":"stdout","time":"2023-03-23T11:11:54.180109721Z"}
+{"log":"\n","stream":"stdout","time":"2023-03-23T11:11:54.180113318Z"}
+{"log":"2023-03-23 14:11:54.213 MSK [1] LOG:  starting PostgreSQL 15.2 (Debian 15.2-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit\n","stream":"stderr","time":"2023-03-23T11:11:54.213449886Z"}
+{"log":"2023-03-23 14:11:54.213 MSK [1] LOG:  listening on IPv4 address \"0.0.0.0\", port 5432\n","stream":"stderr","time":"2023-03-23T11:11:54.2136791Z"}
+{"log":"2023-03-23 14:11:54.213 MSK [1] LOG:  listening on IPv6 address \"::\", port 5432\n","stream":"stderr","time":"2023-03-23T11:11:54.213718695Z"}
+{"log":"2023-03-23 14:11:54.214 MSK [1] LOG:  listening on Unix socket \"/var/run/postgresql/.s.PGSQL.5432\"\n","stream":"stderr","time":"2023-03-23T11:11:54.215037876Z"}
+{"log":"2023-03-23 14:11:54.218 MSK [29] LOG:  database system was shut down at 2023-03-23 14:11:40 MSK\n","stream":"stderr","time":"2023-03-23T11:11:54.218319617Z"}
+{"log":"2023-03-23 14:11:54.223 MSK [1] LOG:  database system is ready to accept connections\n","stream":"stderr","time":"2023-03-23T11:11:54.223134722Z"}
