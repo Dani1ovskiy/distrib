@@ -17,8 +17,10 @@ v_step = ''
 NUM_RE = re.compile(r".*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*")
 
 
+
 bot = telebot.TeleBot(config.token)
-users = [230946227,346573500]
+##########users = [230946227,346573500]
+
 hideBoard = types.ReplyKeyboardRemove()
 
 file1 = '/usr/src/app/dockerdata/contact.xlsx'
@@ -26,6 +28,28 @@ xlsx = pd.ExcelFile(file1)
 df1 = xlsx.parse('contact')
 
 
+##########
+users = {}
+if os.path.exists("users.json"):
+    with open("users.json", "r") as f:
+        users = json.load(f)
+
+def _get_user(id):
+    id = str(id)
+    user = users.get(
+        id, {'id': id, 'history': _get_clear_history(id), 'last_prompt_time': 0})
+    users[id] = user
+    return user
+    
+def _get_clear_history(user_id):
+    current_date = time.strftime("%d.%m.%Y", time.localtime())
+    common_start = f"""Ты полезный ассистент с ИИ, который готов помочь своему пользователю. Ты даешь короткие содержательные ответы, обычно не более 2000 символов. Сегодняшняя дата: {current_date}."""
+    return [{"role": "system", "content": f"""
+Ты полезный ассистент с ИИ, который готов помочь своему пользователю.
+Ты даешь короткие содержательные ответы, обычно не более 2000 символов."""}]
+
+##########
+ 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -723,23 +747,53 @@ def repeat_all_messages(message):
         #Полиров     - 218714164
         #Даниловский - 346573500
         if (message.from_user.id == 218714164 or message.from_user.id == 346573500):
-            openai.api_key = "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"
+            print(message.from_user.id)
+            user_id = str(message.from_user.id)
+            print(user_id)
+            user = _get_user(user_id)
+            print(user)
+            rq = str(message.text)
+            print(rq)
+            
+
+            # Drop history if user is inactive for 1 hour
+            if time.time() - user['last_prompt_time'] > 60*60:
+                user['last_prompt_time'] = 0
+                user['history'] = _get_clear_history(user_id)
+                
+            if rq and len(rq) > 0 and len(rq) < 3000:
+                user['history'].append({"role": "user", "content": rq})
+            
+            model_engine = "text-davinci-003" 
+            openai.api_key = "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"    
+            completion = openai.Completion.create(model=model_engine, messages=user['history'], temperature=0.7)
+            ans = completion['choices'][0]['message']['content']
+            
+            user['history'].append({"role": "assistant", "content": ans})
+            user['last_prompt_time'] = time.time()
+
+            # Save users using utf-8 and beatur format
+            with open("users.json", "w") as f:
+                json.dump(users, f, indent=4, ensure_ascii=False)
+            
+            bot.send_message(message.chat.id, text = ans, reply_markup=hideBoard)
+            
             
             #MODEL = "gpt-3.5-turbo"
-            model_engine = "text-davinci-003"     
-            completion = openai.Completion.create(
-                engine=model_engine,
-                prompt=message.text,
-                max_tokens=2024,
-                temperature=0.5,
-                n=1,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0
-            )
-            
-            output_completion = completion['choices'][0]['text']#['content'] ['text']['message']
-            bot.send_message(message.chat.id, text = output_completion, reply_markup=hideBoard)
+            ##########model_engine = "text-davinci-003"     
+            ##########completion = openai.Completion.create(
+            ##########    engine=model_engine,
+            ##########    prompt=user['history'],
+            ##########    max_tokens=2024,
+            ##########    temperature=0.5,
+            ##########    n=1,
+            ##########    top_p=1,
+            ##########    frequency_penalty=0,
+            ##########    presence_penalty=0
+            ##########)
+            ##########
+            ##########output_completion = completion['choices'][0]['text']#['content'] ['text']['message']
+            ##########bot.send_message(message.chat.id, text = output_completion, reply_markup=hideBoard)
             
             #Chat    
             # response = openai.ChatCompletion.create(
@@ -781,9 +835,6 @@ def repeat_all_messages(message):
                 print('19' + ' | ' +  str(message.from_user.id) + ' | ' + str(message.chat.id) + ' | ' + str(message.text))
                 bot.send_message(message.chat.id, 'Привет!', reply_markup=hideBoard)
             
-
-    
-
 
 
 if __name__ == '__main__':
