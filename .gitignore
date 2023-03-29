@@ -1,3 +1,4 @@
 .cache
 .docker
 .ssh
+ctitp_db/pgdata
