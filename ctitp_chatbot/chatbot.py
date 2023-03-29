@@ -49,8 +49,18 @@ def _get_clear_history(user_id):
     current_date = time.strftime("%d.%m.%Y", time.localtime())
     common_start = f"""Ты полезный ассистент с ИИ, который готов помочь своему пользователю. Ты даешь короткие содержательные ответы, обычно не более 2000 символов. Сегодняшняя дата: {current_date}."""
     return [{"role": "system", "content": f"""
-Ты полезный ассистент с ИИ, который готов помочь своему пользователю.
-Ты даешь короткие содержательные ответы, обычно не более 2000 символов."""}]
+Ты полезный ассистент с ИИ, который готов помочь своему пользователю. 
+Твой пользователь является инженером L1 поддержки компании X и занимается распределением заявок на инженеров L2.
+В компании X есть инженеры L2: Сотрудник 11, Сотрудник 4, Сотрудник 5, Сотрудник 6, Сотрудник 7, Сотрудник 8, Сотрудник 9.
+Сотрудник 11 знает следующее ПО: IBM Cognos Analytics, IBM DB2, IBM Business Automation Workflow, IBM Datastage, IBM Information Server.
+Сотрудник 9 знает следующее ПО: IBM Cognos Analytics, IBM Master Data Management, IBM Planning Analytics, iLog Cplex, IBM Decision Optimisation.
+Сотрудник 5 знает следующее ПО: IBM WebSphere Application Server, IBM Integration Designer.
+Сотрудник 4 знает следующее ПО: IBM Qradar.
+Сотрудник 6 знает следующее ПО: IBM WebSphere Application Server, IBM Filenet, IBM APP Connect, IBM DataPower, IBM MQ, IBM Qradar.
+Сотрудник 7 знает следующее ПО: IBM Business Process Management, IBM ODM.
+Сотрудник 8 знает следующее ПО: IBM WebSphere Application Server, IBM Business Automation Workflow, IBM Business Process Management, IBM Cloud Private.
+Необходимо проанализировав сообщения твоего пользователя посоветовать решение заявки и порекомендовать на какого инженера назначить заявку.
+"""}]
 
 ##########
  
@@ -761,7 +771,7 @@ def repeat_all_messages(message):
             
 
             # Drop history if user is inactive for 1 hour
-            if time.time() - user['last_prompt_time'] > 5*60:
+            if time.time() - user['last_prompt_time'] > 60*60:
                 user['last_prompt_time'] = 0
                 user['history'] = _get_clear_history(user_id)
                 
@@ -786,48 +796,6 @@ def repeat_all_messages(message):
                 json.dump(users, f, indent=4, ensure_ascii=False)
             
             bot.send_message(message.chat.id, text = ans, reply_markup=hideBoard)
-            
-            
-            #MODEL = "gpt-3.5-turbo"
-            ##########model_engine = "text-davinci-003"     
-            ##########completion = openai.Completion.create(
-            ##########    engine=model_engine,
-            ##########    prompt=user['history'],
-            ##########    max_tokens=2024,
-            ##########    temperature=0.5,
-            ##########    n=1,
-            ##########    top_p=1,
-            ##########    frequency_penalty=0,
-            ##########    presence_penalty=0
-            ##########)
-            ##########
-            ##########output_completion = completion['choices'][0]['text']#['content'] ['text']['message']
-            ##########bot.send_message(message.chat.id, text = output_completion, reply_markup=hideBoard)
-            
-            #Chat    
-            # response = openai.ChatCompletion.create(
-                # model = MODEL,
-                # messages=[
-                    # {"role": "system", "content": "Ты инженер первой линии поддержки, который распределяет заявки."},
-                    # {"role": "user", "content": "У меня есть два сотрудника. Сотрудник 1 знает IBM DB2, Сотрудник 2 знает Oracle DB.Ко мне приходит заявка по ошибке в PLSQL. Кому распределить данную заявку?"},
-                    # {"role": "assistant", "content": "Заявку необходимо распределить сотруднику 2, поскольку он знает Oracle DB. Поскольку PLSQL является языком программирования для Oracle, то сотрудник 2 будет наилучшим выбором для распределения заявки."},
-                    # {"role": "user", "content": "Сейчас пришла зявка с текстом select rownum, 1 from ... На кого назначить заявку?"}
-                # ],
-                # messages=[
-                #     {"role": "system", "content": "Ты инженер первой линии поддержки, который распределяет заявки в зависимости от продукта заказчикаи его проблемы."},
-                #     {"role": "system","name":"example_user", "content": "У меня есть два сотрудника. Сотрудник 1 знает IBM DB2, Сотрудник 2 знает Oracle DB.Ко мне приходит заявка по ошибке в PLSQL. Кому распределить данную заявку?"},
-                #     {"role": "system","name":"example_assistant", "content": "Заявку необходимо распределить сотруднику 2, поскольку он знает Oracle DB. Поскольку PLSQL является языком программирования для Oracle, то сотрудник 2 будет наилучшим выбором для распределения заявки."},
-                #     {"role": "system","name":"example_user", "content": "Сейчас пришла зявка с текстом: SELECT * FROM employees WHERE ROWNUM < 10;....Ошибка ora-01017...  На кого назначить заявку?"},
-                #     {"role": "system","name":"example_assistant","content": "Так как ошибка ORA-01017 указывает на проблему с аутентификацией пользователя, то данную заявку необходимо назначить сотруднику, который специализируется на аутентификации и управлении пользователями в базе данных. Если в вашей команде есть такой сотрудник, то заявку следует ему назначить. Если же такого сотрудника нет, то заявку можно назначить сотруднику, который имеет опыт работы с ошибками базы данных и может помочь в поиске решения проблемы."},
-                #     {"role": "system","name":"example_user", "content": "А сейчас пришла заявка по продукту IBM MQ, вот её текст:Добрый день!Наши коллеги выявили корреляцию объема трафика с началом накопления сообщений в трансмиссионной очереди, а именно - при достижении трафика больше 32мб\с появляются накопленияПросьба пояснить/подтвердить/опровергнуть данные выводы.Если это как-то регулируется конфигурацией менеджера/ОС/проч., просьба сообщить где именно."}
-                # ],
-                # messages = [
-                    # {"role":"system","content": "Ты обладаешь знаниями по  различным продуктам IBM и их версиям.Ты помогаешь людям устранять проблемы в продуктах IBM, очень подробно обясняя и используя термины."},
-                    # {"role":"user", "content": "Расскажи про продукты IBM и их версии"},
-                    # {"role":"assistant","content":"Могу рассказать тебе об одном из родуктов"} 
-                # ],    
-                # temperature = 0.5    
-            # )
             
         else:
             msgs_start = ['/start']
