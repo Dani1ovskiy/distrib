@@ -650,55 +650,57 @@ def fn_main_issues(message):
         url =bord.get("url")
         key = bord.get("key")
         redmine = Redmine(url=url,key = key)    
-    
-    
+        
         project = redmine.project.all()        
         current = datetime.now()
-               
-        for project in redmine.project.all():            
-            if project.name == 'Техподдержка':
-                project_name = 'Техподдержка (Дубли для L1)'
-            else:
-                project_name = project.name
-            issues = redmine.issue.filter(project_id=project.identifier, sort='id:asc')
-            issues_list = list(issues)
-            number_of_elements = len(issues_list)
-            if (not issues_list) or (project.name == 'Сопровождение'):
-                continue
-            else:
-                markup = types.InlineKeyboardMarkup()
-                for case in issues:
-                    case_id = str(case.id)
-                    case_updated_on = case.updated_on
-                    
-                    update_date = case_updated_on.strftime("%d.%m.%Y. %H:%M")
-                    case_assigned_to = str(case.assigned_to).replace(" (Технический инженер)", "")
-                    case_priority = str(case.priority)
-                    
-                    if case_priority == '4 Низкий':
-                        case_priority = '⚪'
-                    elif case_priority == '3 Средний':
-                        case_priority = '🟡'
-                    elif case_priority == '2 Высокий':
-                        case_priority = '🟠'
-                    elif case_priority == '1 Критичный (только для прод)':
-                        case_priority = '🔴'
-                    else: case_priority = '⚫'
-                  
-                    diff = current - case_updated_on                    
-                    
-                    if diff.days >= 3:
-                        diffmsg = ' - просрочена'
-                    elif diff.days >= 2:
-                        diffmsg = ' - истекает срок'
-                    else:
-                        diffmsg = ''
-                    
-                    button_text = case_priority + " № " + case_id + " " + case_assigned_to + diffmsg + " | Изм. " + str(update_date) 
-                    
-                    markup.add(types.InlineKeyboardButton(button_text, url=url + 'issues/' + str(case.id)))
-                bot.send_message(message.chat.id, str(project_name) + ''', Количество  открытых заявок - '''  + str(number_of_elements), reply_markup=markup)
-                time.sleep(1)
+        try:       
+            for project in redmine.project.all():
+                if project.name == 'Техподдержка':
+                    project_name = 'Техподдержка (Дубли для L1)'
+                else:
+                    project_name = project.name
+                issues = redmine.issue.filter(project_id=project.identifier, sort='id:asc')
+                issues_list = list(issues)
+                number_of_elements = len(issues_list)
+                if (not issues_list) or (project.name == 'Сопровождение'):
+                    continue
+                else:
+                    markup = types.InlineKeyboardMarkup()
+                    for case in issues:
+                        case_id = str(case.id)
+                        case_updated_on = case.updated_on
+                        
+                        update_date = case_updated_on.strftime("%d.%m.%Y. %H:%M")
+                        case_assigned_to = str(case.assigned_to).replace(" (Технический инженер)", "")
+                        case_priority = str(case.priority)
+                        
+                        if case_priority == '4 Низкий':
+                            case_priority = '⚪'
+                        elif case_priority == '3 Средний':
+                            case_priority = '🟡'
+                        elif case_priority == '2 Высокий':
+                            case_priority = '🟠'
+                        elif case_priority == '1 Критичный (только для прод)':
+                            case_priority = '🔴'
+                        else: case_priority = '⚫'
+                      
+                        diff = current - case_updated_on                    
+                        
+                        if diff.days >= 3:
+                            diffmsg = ' - просрочена'
+                        elif diff.days >= 2:
+                            diffmsg = ' - истекает срок'
+                        else:
+                            diffmsg = ''
+                        
+                        button_text = case_priority + " № " + case_id + " " + case_assigned_to + diffmsg + " | Изм. " + str(update_date) 
+                        
+                        markup.add(types.InlineKeyboardButton(button_text, url=url + 'issues/' + str(case.id)))
+                    bot.send_message(message.chat.id, str(project_name) + ''', Количество  открытых заявок - '''  + str(number_of_elements), reply_markup=markup)
+                    time.sleep(1)
+        except:
+            bot.send_message(message.chat.id, "Портал {} не отвечает. Сообщение о недоступности портала отправлено в поддержку".format(url), parse_mode='html', reply_markup=hideBoard)
+            pass
     bot.send_message(message.chat.id, '⚪️ - 4 Низкий\n🟡 - 3 Средний\n🟠 - 2 Высокий\n🔴 - 1 Критичный\n⚫️ - Приоритет не определен', parse_mode='html', reply_markup=hideBoard)
     
 
