@@ -1,12 +1,8 @@
 import config
-#import requests
-#import json
 import time
 import telebot
 import random
-#import base64
 from telebot import types
-#import smtplib
 import pandas as pd
 from telebot import types
 from datetime import date
@@ -28,10 +24,6 @@ hideBoard = types.ReplyKeyboardRemove()
 file1 = '/usr/src/app/dockerdata/contact.xlsx'
 xlsx = pd.ExcelFile(file1)
 df1 = xlsx.parse('contact')
-
-#file2 = '/usr/src/app/dockerdata/salarycalendar.xlsx'
-#xlsx2 = pd.ExcelFile(file2)
-#df2 = xlsx2.parse('calendar')
 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -787,28 +779,12 @@ def repeat_all_messages(message):
         elif message.text in msgs_hello:
             print('19' + ' | ' +  str(message.from_user.id) + ' | ' + str(message.chat.id) + ' | ' + str(message.text))
             bot.send_message(message.chat.id, 'Привет!', reply_markup=hideBoard)
-        # else:
-            # print('8' + ' | ' + str(message.from_user.id) + ' | ' + str(message.chat.id) + ' | ' + str(message.text))
-            # f = open('/usr/src/app/dockerdata/message_else_text.log', 'a')
-            # f.write(message.text + '\n')
-            # bot.send_message(message.chat.id, 'К сожалению, не понимаю Вас 😢', reply_markup=hideBoard)
-        
+
+
 if __name__ == '__main__':
     print('0' + ' | ' + str('Start TG BOT') + ' | ' + str(' ') + ' | ' + str(' '))  
     
     bot.infinity_polling()
     
-    #append_df_to_excel(r'd:/temp/res.xlsx', df.iloc[5:7, 3:5] * 100, startrow=5+1, startcol=3+1, index=False, header=False)
-                            
-                            
-    ##data_filtered.to_excel(writer, "Main", cols=['Diff1', 'Diff2'])
-    
-
-    
-    ###d1 = {'ID': [message.from_user.id], 'phone': [phone]}
-    ###df = pd.DataFrame(d1)
-    ###df.to_csv("/usr/src/app/dockerdata/ids.log", sep=";", mode='a', header=False)
-    ###bot.send_message(message.chat.id, 'Вы зарегистрированы в чатботе', reply_markup=hideBoard)
-###-----------------------------------------------------------------------------------------------
 
 
