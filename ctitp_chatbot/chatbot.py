@@ -772,7 +772,7 @@ def repeat_all_messages(message):
             #cheap_model = "gpt-3.5-turbo"
             openai.api_key = "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"    
             #completion = openai.Completion.create(engine=model_engine, prompt=user['history'], temperature=0.5)
-            completion = openai.ChatCompletion.create(model=model_engine, messages=rq, temperature=0.7)
+            completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.7)
             ans = completion['choices'][0]['message']['content']
             
             user['history'].append({"role": "assistant", "content": ans})
