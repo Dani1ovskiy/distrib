@@ -719,7 +719,7 @@ def fn_main_issues(message):
 def repeat_all_messages(message):
     import openai
     
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     #MODEL = "gpt-3.5-turbo"
     model_engine = "text-davinci-003"     
