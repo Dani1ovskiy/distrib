@@ -767,7 +767,9 @@ def repeat_all_messages(message):
             if rq and len(rq) > 0 and len(rq) < 3000:
                 user['history'].append({"role": "user", "content": rq})
             
-            model_engine = "text-davinci-003" 
+            ########model_engine = "text-davinci-003" 
+            model_engine = "gpt-4-0314"
+            #cheap_model = "gpt-3.5-turbo"
             openai.api_key = "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"    
             #completion = openai.Completion.create(engine=model_engine, prompt=user['history'], temperature=0.5)
             completion = openai.ChatCompletion.create(model=model_engine, messages=rq, temperature=0.7)
