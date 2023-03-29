@@ -9,6 +9,9 @@ from datetime import date
 import re
 import openai
 
+import os
+import json
+
 v_phone = ''
 v_lastname = ''
 v_firstname = ''
