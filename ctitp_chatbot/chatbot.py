@@ -768,7 +768,7 @@ def repeat_all_messages(message):
                 user['history'].append({"role": "user", "content": rq})
             
             ########model_engine = "text-davinci-003" 
-            model_engine = "gpt-4-0314"
+            model_engine = "gpt-3.5-turbo"
             #cheap_model = "gpt-3.5-turbo"
             openai.api_key = "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"    
             #completion = openai.Completion.create(engine=model_engine, prompt=user['history'], temperature=0.5)
