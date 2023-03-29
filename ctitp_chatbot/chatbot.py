@@ -751,17 +751,17 @@ def repeat_all_messages(message):
         #Полиров     - 218714164
         #Даниловский - 346573500
         if (message.from_user.id == 218714164 or message.from_user.id == 346573500):
-            print(message.from_user.id)
+            #print(message.from_user.id)
             user_id = str(message.from_user.id)
-            print(user_id)
+            #print(user_id)
             user = _get_user(user_id)
-            print(user)
+            #print(user)
             rq = str(message.text)
             
             
 
             # Drop history if user is inactive for 1 hour
-            if time.time() - user['last_prompt_time'] > 60*60:
+            if time.time() - user['last_prompt_time'] > 5*60:
                 user['last_prompt_time'] = 0
                 user['history'] = _get_clear_history(user_id)
                 
