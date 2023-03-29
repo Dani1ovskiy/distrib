@@ -33,8 +33,9 @@ df1 = xlsx.parse('contact')
 
 ##########
 users = {}
-if os.path.exists("users.json"):
-    with open("users.json", "r") as f:
+file_user_json = '/usr/src/app/dockerdata/users.json'
+if os.path.exists(file_user_json):
+    with open(file_user_json, "r") as f:
         users = json.load(f)
 
 def _get_user(id):
@@ -756,7 +757,7 @@ def repeat_all_messages(message):
             user = _get_user(user_id)
             print(user)
             rq = str(message.text)
-            print(rq)
+            
             
 
             # Drop history if user is inactive for 1 hour
@@ -767,19 +768,21 @@ def repeat_all_messages(message):
             if rq and len(rq) > 0 and len(rq) < 3000:
                 user['history'].append({"role": "user", "content": rq})
             
-            ########model_engine = "text-davinci-003" 
+            print(user['history'])
+            
+
             model_engine = "gpt-3.5-turbo"
-            #cheap_model = "gpt-3.5-turbo"
-            openai.api_key = "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"    
-            #completion = openai.Completion.create(engine=model_engine, prompt=user['history'], temperature=0.5)
+
+            openai.api_key = "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"
             completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.7)
             ans = completion['choices'][0]['message']['content']
             
             user['history'].append({"role": "assistant", "content": ans})
             user['last_prompt_time'] = time.time()
+            print(user['history'])
 
             # Save users using utf-8 and beatur format
-            with open("users.json", "w") as f:
+            with open(file_user_json, "w") as f:
                 json.dump(users, f, indent=4, ensure_ascii=False)
             
             bot.send_message(message.chat.id, text = ans, reply_markup=hideBoard)
