@@ -786,16 +786,10 @@ def repeat_all_messages(message):
         #Полиров     - 218714164
         #Даниловский - 346573500
         if (message.from_user.id == 218714164 or message.from_user.id == 346573500):
-            #print(message.from_user.id)
             user_id = str(message.from_user.id)
-            #print(user_id)
             user = _get_user(user_id)
-            #print(user)
             rq = str(message.text)
-            
-            
 
-            # Drop history if user is inactive for 1 hour
             if time.time() - user['last_prompt_time'] > 60*60:
                 user['last_prompt_time'] = 0
                 user['history'] = _get_clear_history(user_id)
@@ -806,15 +800,16 @@ def repeat_all_messages(message):
             print(user['history'])
             bot.send_chat_action(message.chat.id, 'typing')
             
-
             model_engine = "gpt-3.5-turbo"
-
+            model_engine = "gpt-4"
+            
             openai.api_key = "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"
-            completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.7)
+            completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.5)
             ans = completion['choices'][0]['message']['content']
             
             user['history'].append({"role": "assistant", "content": ans})
             user['last_prompt_time'] = time.time()
+            
             print(user['history'])
 
             # Save users using utf-8 and beatur format
