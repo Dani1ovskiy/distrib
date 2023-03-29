@@ -3,3 +3,5 @@
 .ssh
 ctitp_db/pgdata
 /ctitp_db/pgdata/
+/ctitp_db/pgdata/*
+/ctitp_db/pgdata/**
