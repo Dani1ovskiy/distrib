@@ -798,6 +798,7 @@ def repeat_all_messages(message):
                 user['history'].append({"role": "user", "content": rq})
             
             print(user['history'])
+            bot.send_chat_action(message.chat.id, 'typing')
             
 
             model_engine = "gpt-3.5-turbo"
