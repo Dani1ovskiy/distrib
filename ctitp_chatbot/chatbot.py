@@ -769,7 +769,7 @@ def repeat_all_messages(message):
             
             model_engine = "text-davinci-003" 
             openai.api_key = "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"    
-            completion = openai.Completion.create(model=model_engine, messages=user['history'], temperature=0.7)
+            completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.7)
             ans = completion['choices'][0]['message']['content']
             
             user['history'].append({"role": "assistant", "content": ans})
