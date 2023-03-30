@@ -801,8 +801,7 @@ def repeat_all_messages(message):
             bot.send_chat_action(message.chat.id, 'typing')
             
             model_engine = "gpt-3.5-turbo"
-            model_engine = "gpt-4"
-            
+                        
             openai.api_key = "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"
             completion = openai.ChatCompletion.create(model=model_engine, messages=user['history'], temperature=0.5)
             ans = completion['choices'][0]['message']['content']
