@@ -783,9 +783,14 @@ def repeat_all_messages(message):
         fn_main_start(message)
     else:
     
-        #Полиров     - 218714164
-        #Даниловский - 346573500
-        if (message.from_user.id == 218714164 or message.from_user.id == 346573500):
+        #Даниловский Данила	- 346573500
+        #Кольцов Александр	- 5065375376
+        #Леонтьев Дмитрий	- 500683099
+        #Мальцев Алексей	- 402431402
+        #Полиров Дмитрий	- 218714164
+        
+        
+        if (message.from_user.id == 218714164 or message.from_user.id == 346573500 or message.from_user.id == 5065375376 or message.from_user.id == 500683099 or message.from_user.id == 402431402):
             user_id = str(message.from_user.id)
             user = _get_user(user_id)
             rq = str(message.text)
