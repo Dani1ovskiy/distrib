@@ -94,27 +94,32 @@ def _get_clear_history(user_id):
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #
 #
-
 def userid_list():
+    
     dff = pd.read_csv("/usr/src/app/dockerdata/ids.log", sep=";", header=0)
     dff = dff['ID']
     dff = dff.tolist()
     return dff
+    print('====================== user {} занесён в ids.log ======================'.format(message.from_user.id))
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # help
 # function to handle the /help command
 @bot.message_handler(commands=['help'], func=lambda message: message.from_user.id in userid_list())
+
 def fn_main_help(message):
-    print('6' + ' | message.from_user.id = ' + str(message.from_user.id) + ' | message.chat.id = ' + str(message.chat.id) + ' | message.text = ' + str(message.text))
+    print('====================== user {} fn_main_help start ======================'.format(message.from_user.id))
+    print(' | message.from_user.id = ' + str(message.from_user.id) + ' | message.chat.id = ' + str(message.chat.id) + ' | message.text = ' + str(message.text))
     bot.send_chat_action(message.chat.id, 'typing')
     time.sleep(1)
     
     bot.send_message(message.chat.id, '\nВ моём арсенале есть следущее 🔽🔽🔽 \n/issues - Информация о заявках поддержки \n/contacts - Контакты команды \n/website - Ресурсы компании \n/calendar - Мои встречи \n/help - Помощь \n/wiki - База знаний \nА так же я с удовольствием отвечу на твои вопросы. Для этого просто напиши мне😊', reply_markup=hideBoard)
+    print('====================== user {} fn_main_help end ======================'.format(message.from_user.id))
 # start
 # function to handle the /start command
 @bot.message_handler(commands=['start'])
-def fn_main_start(message):
+def fn_main(message):
+    print('====================== user {} fn_main start ======================'.format(message.from_user.id))
     print('10' + ' | message.from_user.id = ' + str(message.from_user.id) + ' | message.chat.id = ' + str(message.chat.id) + ' | message.text = ' + str(message.text))
     mes = f'Привет. Я корпоративный бот компании ЦТИТП.'
     hello_mes = f'Теперь мне нужно проверить являешься ли ты сотрудником компании...'
@@ -126,22 +131,24 @@ def fn_main_start(message):
     phone_btn.add(types.KeyboardButton(text='Отправить контакт', request_contact=True))
     msg = bot.send_message(message.chat.id, 'Для этого нажми кнопку *Отправить контакт* 👇 ниже', parse_mode='Markdown',
                            reply_markup=phone_btn)
-    bot.register_next_step_handler(msg, start_4)
+    bot.register_next_step_handler(msg,checking_access)
     
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def start_4(message):
-    time.sleep(1)    
+def checking_access(message):
+    time.sleep(1)
+    print('====================== user {} checking_access start ======================'.format(message.from_user.id))
     if (message.contact is not None and message.from_user.id == message.contact.user_id):
         bot.send_message(message.chat.id, 'Проверяю доступ ...', reply_markup=hideBoard)
         time.sleep(3)
         start_access(message, message.contact.phone_number)           
     else:
         bot.send_message(message.chat.id, 'Вы прислали не свой контакт 😈', reply_markup=hideBoard)
-        
+    print('====================== user {} checking_access end ======================'.format(message.from_user.id))    
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 def start_access(message, phone):
+    print('====================== user {} start_access start ======================'.format(message.from_user.id))
     NUM_RE = re.compile(r".*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*(\d).*")
     df1["Phone"] = df1["Phone"].apply(str)
     df1["Phone"] = df1["Phone"].apply(lambda x: "+7" + ''.join(NUM_RE.match(x).groups()))
@@ -154,8 +161,9 @@ def start_access(message, phone):
         bot.send_message(message.chat.id,'У Вас нет доступа или доступ запрещен😈', reply_markup=hideBoard)
     else:
         start_5(message, str(ph(phone)))
-        
+    print('====================== user {} start_access end ======================'.format(message.from_user.id))    
 def start_5(message, phone):
+    print('====================== user {} start_5 start ======================'.format(message.from_user.id))
     d1 = {'ID': [message.from_user.id], 'phone': [phone]}
     df = pd.DataFrame(d1)
     df.to_csv("/usr/src/app/dockerdata/ids.log", sep=";", mode='a', header=False)
@@ -173,7 +181,7 @@ def start_5(message, phone):
     print(dfXLSX)
     
     bot.send_message(message.chat.id, 'Вы зарегистрированы в чатботе! \nУ меня есть следующие команды: \n/issues - Информация о заявках поддержки \n/contacts - Контакты команды \n/website - Ресурсы компании \n/calendar - Мои встречи \n/help - Помощь \n/wiki - База знаний \nА так же я с удовольствием отвечу на твои вопросы. Для этого просто напиши мне😊', reply_markup=hideBoard)
-    
+    print('====================== user {} start_5 end ======================'.format(message.from_user.id))
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -187,6 +195,7 @@ def start_5(message, phone):
 # function to handle the /contact command
 @bot.message_handler(commands=['contacts'], func=lambda message: message.from_user.id in userid_list())
 def fn_main_contact(message):
+    print('====================== user {} fn_main_contact start ======================'.format(message.from_user.id))
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     btn1 = types.KeyboardButton("✋ Отмена")
     markup.add(btn1)
@@ -323,7 +332,7 @@ def fn_contact_find(message):
         m = df1[df1['Surname_eng'] == f1]
         msg = bot.send_message(message.chat.id, f'Я не нашёл коллегу по <b>фамилии</b> <b>{message.text}</b> из запроса. Попробуем еще раз?', parse_mode='html', reply_markup=markup2)
         bot.register_next_step_handler(msg, fn3, '', '', '')
-
+    
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------
